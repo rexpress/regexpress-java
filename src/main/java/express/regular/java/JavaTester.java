@@ -1,13 +1,12 @@
 package express.regular.java;
 
-import express.regular.common.GroupResult;
-import express.regular.common.MatchResult;
-import express.regular.common.TestResult;
-import express.regular.common.Tester;
+import express.regular.common.*;
 import express.regular.exception.InvalidConfigException;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,6 +14,7 @@ public class JavaTester extends Tester {
 
     public static final String CONFIG_TYPE = "test_type";
     public static final String CONFIG_REGEX = "regex";
+    public static final String CONFIG_REPLACE = "replace";
 
     public static final String CONFIG_CASE_INSENSITIVE = "CASE_INSENSITIVE";
     public static final String CONFIG_CANON_EQ = "CANON_EQ";
@@ -28,6 +28,7 @@ public class JavaTester extends Tester {
 
     public static final String TYPE_MATCH = "match";
     public static final String TYPE_GROUP = "group";
+    public static final String TYPE_REPLACE = "replace";
 
     private TestResult testRegexMatching(Pattern pattern, List<String> testStrings) throws IOException {
         TestResult testResult = new TestResult();
@@ -53,7 +54,7 @@ public class JavaTester extends Tester {
         for(int i = 0; i < testStrings.size(); i++) {
             String testString = testStrings.get(i);
             Matcher matcher = pattern.matcher(testString);
-
+            GroupResult.GroupsList groupsList = new GroupResult.GroupsList();
             while (matcher.find()) {
                 List<String> groups = new ArrayList<String>(matcher.groupCount());
                 for (int j = 1; j <= matcher.groupCount(); j++) {
@@ -62,11 +63,34 @@ public class JavaTester extends Tester {
                     }
                     groups.add(matcher.group(j));
                 }
-                groupResult.getResultList().add(groups);
+                groupsList.addGroups(groups);
             }
+            if(groupsList.size() > 0) {
+                groupResult.getResultList().add(groupsList);
+            } else {
+                groupResult.getResultList().add(null);
+            }
+
         }
 
         testResult.setResult(groupResult);
+        return testResult;
+    }
+
+    private TestResult testRegexReplace(Pattern pattern, List<String> testStrings, String replace) {
+        TestResult testResult = new TestResult();
+        testResult.setType(TestResult.Type.STRING);
+
+        StringResult stringResult = new StringResult();
+
+        for(int i = 0; i < testStrings.size(); i++) {
+            String testString = testStrings.get(i);
+            Matcher matcher = pattern.matcher(testString);
+            String replacedString = matcher.replaceAll(replace);
+            stringResult.getResultList().add(replacedString);
+        }
+
+        testResult.setResult(stringResult);
         return testResult;
     }
 
@@ -108,10 +132,14 @@ public class JavaTester extends Tester {
             return testRegexMatching(pattern, testStrings);
         } else if (testType.equals(TYPE_GROUP)) {
             return testRegexGroup(pattern, testStrings);
+        } else if (testType.equals(TYPE_REPLACE)) {
+            String replace = (String) configMap.get(CONFIG_REPLACE);
+            return testRegexReplace(pattern, testStrings, replace);
         } else {
             throw new InvalidConfigException(String.format("Unsupported Test Type: %s", testType));
         }
     }
+
 
     public static void main(String args[]) {
         Tester tester = new JavaTester();
