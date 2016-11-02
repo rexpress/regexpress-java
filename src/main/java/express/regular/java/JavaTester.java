@@ -57,7 +57,7 @@ public class JavaTester extends Tester {
             GroupResult.GroupsList groupsList = new GroupResult.GroupsList();
             while (matcher.find()) {
                 List<String> groups = new ArrayList<String>(matcher.groupCount());
-                for (int j = 1; j <= matcher.groupCount(); j++) {
+                for (int j = 0; j <= matcher.groupCount(); j++) {
                     if(i == 0) {
                         groupResult.getColumns().add("Group #" + j);
                     }
