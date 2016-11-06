@@ -55,8 +55,8 @@ public class JavaTesterTest {
         Assert.assertEquals(testResult.getType(), TestResult.Type.GROUP);
         Assert.assertNotNull(testResult.getResult());
         GroupResult groupResult = (GroupResult) testResult.getResult();
-        Assert.assertArrayEquals(groupResult.getColumns().toArray(), new String[]{"Group #1", "Group #2", "Group #3"});
-        Assert.assertArrayEquals(groupResult.getResultList().get(0).getGroups(0).toArray(), new String[]{"Hello", "Test", "String"});
+        Assert.assertArrayEquals(groupResult.getColumns().toArray(), new String[]{"Group #0", "Group #1", "Group #2", "Group #3"});
+        Assert.assertArrayEquals(groupResult.getResultList().get(0).getGroups(0).toArray(), new String[]{"Hello Test String", "Hello", "Test", "String"});
     }
 
     @Test

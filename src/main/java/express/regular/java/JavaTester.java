@@ -55,12 +55,16 @@ public class JavaTester extends Tester {
             String testString = testStrings.get(i);
             Matcher matcher = pattern.matcher(testString);
             GroupResult.GroupsList groupsList = new GroupResult.GroupsList();
+
+            if( i == 0) {
+                for (int j = 0; j <= matcher.groupCount(); j++) {
+                    groupResult.getColumns().add("Group #" + j);
+                }
+            }
+
             while (matcher.find()) {
                 List<String> groups = new ArrayList<String>(matcher.groupCount());
                 for (int j = 0; j <= matcher.groupCount(); j++) {
-                    if(i == 0) {
-                        groupResult.getColumns().add("Group #" + j);
-                    }
                     groups.add(matcher.group(j));
                 }
                 groupsList.addGroups(groups);
