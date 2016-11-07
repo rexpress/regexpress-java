@@ -63,10 +63,10 @@ public class JavaTesterTest {
     public void javaReplaceTest() {
         Map<String, Object> configMap = new HashMap<String, Object>();
         configMap.put(JavaTester.CONFIG_TYPE, JavaTester.TYPE_REPLACE);
-        configMap.put(JavaTester.CONFIG_REGEX,  "([a-zA-Z]*) ([a-zA-Z]*) ([a-zA-Z]*)");
-        configMap.put(JavaTester.CONFIG_REPLACE,  "$1! $2! $3!");
+        configMap.put(JavaTester.CONFIG_REGEX,  "(0[0-9]{2}) ([0-9]{3,4}) ([0-9]{3,4})");
+        configMap.put(JavaTester.CONFIG_REPLACE,  "$1-$2-$3");
 
-        List<String> testMap = Arrays.asList(new String[]{"Hello Test String", "Hello2 Test2 String2"});
+        List<String> testMap = Arrays.asList(new String[]{"02 345 2323", "010 1234 5678"});
 
         Gson gson = new Gson();
         String configJsonString = gson.toJson(configMap);
@@ -78,7 +78,7 @@ public class JavaTesterTest {
         Assert.assertEquals(testResult.getType(), TestResult.Type.STRING);
         Assert.assertNotNull(testResult.getResult());
         StringResult stringResult = (StringResult) testResult.getResult();
-        Assert.assertEquals(stringResult.getResultList().get(0), "Hello! Test! String!");
-        Assert.assertEquals(stringResult.getResultList().get(1), "Hello2 Test2 String2");
+        Assert.assertEquals(stringResult.getResultList().get(0), "02 345 2323");
+        Assert.assertEquals(stringResult.getResultList().get(1), "010-1234-5678");
     }
 }
